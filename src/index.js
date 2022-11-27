@@ -8,6 +8,8 @@ const {startDatabase} = require('./database/mongo');
 const {insertAd, getAds} = require('./database/ads');
 const {deleteAd, updateAd} = require('./database/ads');
 
+const {  errorResponse } = require("./helpers");
+
 // defining the Express app
 const app = express();
 
@@ -43,22 +45,34 @@ app.listen(3001, () => {
 
 
 app.post('/', async (req, res) => {
+  try {
     const newAd = req.body;
     await insertAd(newAd);
     res.send({ message: 'New ad inserted.' });
-  });
+  } catch (err) {
+    errorResponse(req, res, err.message)
+  }
+});
   
   // endpoint to delete an ad
-  app.delete('/:id', async (req, res) => {
+app.delete('/:id', async (req, res) => {
+  try {
     await deleteAd(req.params.id);
     res.send({ message: 'Ad removed.' });
-  });
+  } catch (err) {
+    errorResponse(req, res, err.message)
+  }
+});
   
   // endpoint to update an ad
   app.put('/:id', async (req, res) => {
+   try {
     const updatedAd = req.body;
     await updateAd(req.params.id, updatedAd);
     res.send({ message: 'Ad updated.' });
+   } catch(err) {
+    errorResponse(req, res, err.message);
+   }
   });
 
 
